@@ -1,20 +1,18 @@
 game.newLoopFromConstructor('startGame', function(){
 game.setFPS(60);
-//Audio Fone
+//Аудио для фана
 var foneMusick = pjs.audio.newAudio("audio/fone/foneMusick.mp3", 0.1),
     foneForestSong = pjs.audio.newAudio("audio/fone/foneForestSong.mp3", 0.2);
-
 foneMusick.play();
 foneForestSong.play();
-
+//Аудио проигрывается опять через определенное время
 setInterval(function() {
     foneMusick.replay();
 }, 68 * 1000);
 setInterval(function() {
     foneForestSong.replay();
 }, 600 * 1000);
-
-//setBackGround
+//Задаём задний фон
 var randomBackgroundDecoration = 0;
 var sizeBackground=256,x,y, backGorund=[];
 var backgroundDecoration = [];
@@ -55,7 +53,7 @@ for(x = 0; x<15; x++){
             )
         }
 };
-//Player
+//Игрок
 var player = game.newAnimationObject({
     animation: tiles.newImage('img/player.png').getAnimation(192, 63, 32, 35, 1),
     x : 300,
@@ -85,6 +83,7 @@ var player = game.newAnimationObject({
     h: 33,
     visible: true
 });
+//Объект тумана(затемнения)
 var fog = game.newImageObject({
     x: player.x,
     y: player.y,
@@ -100,7 +99,7 @@ var fogFull = game.newImageObject({
     file: 'img/blackFull.png',
     visible: false,
 });
-    
+//Массивы объектов игры и некоторые другие переменные
 var walls = [],
     ground = [],
     ladders = [],
@@ -113,6 +112,7 @@ var walls = [],
     informationValue = 0,
     levelComplitedAnimation,
     starsToCompliteLevel = 0,
+    //Объект врага Черьвь
     enemyWorm = game.newAnimationObject({
         animation: tiles.newImage('img/enemies/worm.png').getAnimation(0, 0, 32, 35, 1),
         x: 0,
@@ -129,12 +129,13 @@ var walls = [],
             playCounter: 0,
         }
     }),
+    //Анимации черьвя
     enemyWormCrawsOutAnimation = tiles.newImage('img/enemies/worm.png').getAnimation(0, 0, 32, 35, 8),
     enemyWormStandAnimation = tiles.newImage('img/enemies/worm.png').getAnimation(4, 32, 32, 35, 6),
     enemyWormHideAnimation = tiles.newImage('img/enemies/worm.png').getAnimation(4, 64, 32, 35, 8),
     enemyWormUnderGroundAnimation = tiles.newImage('img/enemies/worm.png').getAnimation(0, 0, 32, 35, 1);
 
-//Touchpad controlls
+//Объекты для сенсорного экрана
 var goRight = game.newImageObject({
     file: 'img/controll/right.png',
     w: 50,
@@ -180,8 +181,9 @@ goDown.turn(270);
 //GlobalGameLoop
 this.update = function() { 
 //
-//LevelNumber
+//Функцыя которая указывает нужный уровень
 function levelSet() {
+//Делаем чтобы функцыя сработала только 1 раз
 if(functionIsReady == true) return;
 //Обнуляем всё переменныё
 player.energy = 100;
@@ -203,6 +205,7 @@ functionIsReady = true;
 if(StartWithCheckPoint == true) {
     levelNumber = checkPoint.levelNumber;
 }
+//Указываем карты уровня
 if(levelNumber == 1) {
     player.x = 300;
     player.y = 400;
@@ -419,7 +422,6 @@ var enemiesMap = {
     h: 20,
     level: enemiesMapLevel,
 }
-
 OOP.forArr(map.level, function (string, y){
     OOP.forArr(string, function (el, x){
         var randomDecorationX = Math.ceil(Math.random() * 50)
@@ -620,6 +622,7 @@ var eWolfAnimationMove = tiles.newImage("img/enemies/wolf.png").getAnimation(320
     eWolfAanimationSleep = tiles.newImage("img/enemies/wolf.png").getAnimation(320, 0, 64, 30, 4);
 OOP.forArr(enemiesMap.level, function (string, y){
     OOP.forArr(string, function (el, x){
+        //Звуки волков
     var eWolfMoveRightHide = pjs.audio.newAudio("audio/eWolf/wolfMoveRight.mp3", 0.5),
         eWolfMoveLeftHide = pjs.audio.newAudio("audio/eWolf/wolfMoveLeft.mp3", 0.5),
         eWolfHuntingMode = pjs.audio.newAudio("audio/eWolf/wolfHuntingMode.mp3", 0.7),
@@ -688,6 +691,7 @@ OOP.forArr(enemiesMap.level, function (string, y){
         }
     });
 });
+//Если стартуем с быстрого сохранения задаем переменным значения сохранения
 if(StartWithCheckPoint == true) {
     StartWithCheckPoint = false;
     player.x = checkPoint.x;
@@ -703,7 +707,7 @@ starsToCompliteLevel = stars.length;
 //Запускаем нужный уровень
 levelSet();
 
-//EnemyWorm
+//Функции черьвя
 if(enemyWorm.inLevel == true) {
     if(enemyWorm.setRandomHideTime == true){
         enemyWorm.randomHideTime = 100 + Math.ceil(Math.random() * 1000);
@@ -742,13 +746,14 @@ if(enemyWorm.inLevel == true) {
     }
 }
     
-//
+//Камера
 camera.setPositionC(point(player.x, player.y));
 game.clear();
+//Туман двигается за игроком
 fog.setPositionC(point(player.x + 10, player.y + 50));
 fogFull.setPositionC(point(player.x + 10, player.y + 50));
-//Controll
-//CheckPoint
+//Управление
+//Быстрое сохранение
 if(key.isPress('F1') || (touch.isDown() && touch.isInObject(quickSave))) {
     checkPoint.x = player.x;
     checkPoint.y = player.y;
@@ -791,7 +796,7 @@ if((key.isDown('D') || key.isDown('RIGHT')) || (touch.isDown() && touch.isInObje
     player.speedX = 0;
 }
 
-//Столкновения
+//Столкновения с лестницами
 for(var i = 0; i < ladders.length; i++) {
     if(ladders[i].isStaticIntersect(player)) {
     player.inLadder = true;
@@ -807,8 +812,8 @@ for(var i = 0; i < ladders.length; i++) {
         }
     } 
 }
+//Information
 for(var i = 0; i < decorations.length; i++) {
-    //Information
     if(decorations[i].isStaticIntersect(player) && decorations[i].isInformationObject == true && player.x + 5 >= decorations[i].x) {
             decorations[i].isInformationObject = false;
             informationCounter += 1;
@@ -816,7 +821,7 @@ for(var i = 0; i < decorations.length; i++) {
     } 
 }
     
-//Hide
+//Игрок прячется
 for(var i = 0; i < hidingObjects.length; i++) {
         if(hidingObjects[i].isStaticIntersect(player)) {
             if((key.isDown('E') || (touch.isDown() && touch.isInObject(doIt))) && (player.x + 3 > hidingObjects[i].x && player.x - 18 < hidingObjects[i].x) && player.speedX == 0) {
@@ -825,6 +830,7 @@ for(var i = 0; i < hidingObjects.length; i++) {
             player.inGround = true;
             player.speedY = 0;
             player.speedX = 0;
+            //Мод при котором игрок отрысовывается раньше чем объект в котором прячемся
             hideMod = true;
         } else {
             hideMod = false;
@@ -848,8 +854,7 @@ for(var i = 0; i < stars.length; i++) {
         }
     }
 }
-
-//LevelEnding
+//Конец кровня
 for(var i = 0; i < ground.length; i++) {
     if(player.isStaticIntersect(ground[i]) && ground[i].isLevelEnd == true) {
         if(levelNumber == 1) {
@@ -859,9 +864,7 @@ for(var i = 0; i < ground.length; i++) {
         }
 }
 }
-
-
-//Gravyty
+//Гравитация
 if(player.inLadder == false && player.hide == false) {
     for(var i = 0; i < walls.length; i++) {
         if(!walls[i].isStaticIntersect(player)){
@@ -878,11 +881,10 @@ if(player.inLadder == false && player.hide == false) {
         }
     }
 }
-
 if(player.inGround == false) {
     player.speedY += 0.2;
 }
-//Enemies wolfs
+//Действия волков
 for(var i = 0; i < eWolf.length; i++) {
     eWolf[i].x += eWolf[i].speedX;
     if(eWolf[i].speedX > 0) {
@@ -891,11 +893,9 @@ for(var i = 0; i < eWolf.length; i++) {
     else if(eWolf[i].speedX < 0) {
         eWolf[i].setFlip(1, 0);
     }
-    
     if(eWolf[i].huntingMode == false) {
         if(eWolf[i].moveR == true) {
             eWolf[i].speedX = 1.2;
-            
         }
         else if(eWolf[i].moveR == false) eWolf[i].speedX = -1.2;
     }
@@ -906,7 +906,6 @@ for(var i = 0; i < eWolf.length; i++) {
     } else {
         eWolf[i].audioHuntingMode.stop();
     }
-
     if(eWolf[i].isStaticIntersect(player) && player.hide == false) {
         eWolf[i].audioHuntingMode.stop();
         game.startLoop('menu');
@@ -930,7 +929,7 @@ for(var i = 0; i < eWolf.length; i++) {
         } else {
             eWolf[i].huntingMode = false;
         }
-        
+    //Волк проходит когда прячемся
     if(player.x <= eWolf[i].x + 50 && player.x > eWolf[i].x && eWolf[i].playWolfMoveRight == false && eWolf[i].speedX > 0 && player.hide == true && (player.y >= eWolf[i].y - 30 && player.y <= eWolf[i].y + 30)) {
         eWolf[i].audioMoveRightHide.play(0.3);
         eWolf[i].playWolfMoveRight = true;
@@ -951,7 +950,7 @@ for(var i = 0; i < eWolf.length; i++) {
             eWolf[i].audioMoveRightHide.stop();
         }
     }
-    //Audio
+    //Ситывает насколько далеко игрок и в зависимости от этого задает громкость волку (по вертикали и горизонтали)
     eWolf[i].volumeForMoveBaysick = (eWolf[i].x - player.x);
     eWolf[i].playCounterBaysick++
     function randomAudioMovePlay() {
@@ -1018,7 +1017,7 @@ for(var i = 0; i < eWolf.length; i++) {
     
 }
 
-//Player move
+//Игрок ходит
 playerMove.x = player.x;
 playerMove.y = player.y;
 player.x += player.speedX;
@@ -1030,7 +1029,7 @@ if(player.speedX == 0) {
     playerMove.visible = true;
     player.visible = false;
 }
-    
+//Восстановление энергии
 if(player.speedX == 0 && player.energy < 100) {
     player.energyTimer += 1;
 }
@@ -1042,15 +1041,13 @@ if(player.energyTimer > 200 && player.energy < 100) {
 }
     
 //Draw
-//Hide Mode
 OOP.drawArr(backGorund);
 OOP.drawArr(backgroundDecoration);
-
-//OOP.drawArr(walls);
 OOP.drawArr(ground);
 OOP.drawArr(decorations);
 OOP.drawArr(ladders);
 OOP.drawArr(stars);
+//Hide Mode
 if(!hideMod) {
 OOP.drawArr(hidingObjects);
 player.draw();
@@ -1067,7 +1064,7 @@ fog.draw();
 fogFull.draw();
 
 
-//Energy
+//Энергия и другие элементы
 brush.drawTextS({
     x : 50,
     y : 25,
@@ -1135,7 +1132,7 @@ quickSave.draw();
 }
 });
 
-
+//Цыкл для информации
 game.newLoopFromConstructor('Information', function() {
     gameInPouse = true;
     var informationText = '';
