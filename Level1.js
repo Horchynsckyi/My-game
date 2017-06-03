@@ -1,6 +1,6 @@
 game.newLoopFromConstructor('startGame', function(){
 game.setFPS(60);
-//Аудио для фана
+//Аудио для фона
 var foneMusick = pjs.audio.newAudio("audio/fone/foneMusick.mp3", 0.1),
     foneForestSong = pjs.audio.newAudio("audio/fone/foneForestSong.mp3", 0.2);
 foneMusick.play();
