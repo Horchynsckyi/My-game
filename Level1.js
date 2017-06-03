@@ -880,7 +880,6 @@ if(player.inLadder == false && player.hide == false) {
 }
 
 if(player.inGround == false) {
-    log(player.speedY);
     player.speedY += 0.2;
 }
 //Enemies wolfs
