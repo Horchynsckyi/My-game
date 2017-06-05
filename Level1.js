@@ -3,13 +3,13 @@ this.entry = function() {
     if(gameInPouse == false) {
 //    clearAllVarsFunc();
     playAudioFoneFunc();
-    backGorund = setBackGroundFunc();
     setPlayerPositionFunc();
 //    levelSet(1);
     }
     StartWithCheckPoint = false;
     gameInPouse = false;
 }
+backGorund = setBackGroundFunc();
 //
 var mapLevel =  [
     '      ',
