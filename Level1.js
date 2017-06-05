@@ -1,14 +1,5 @@
 game.newLoopFromConstructor('Level1', function(){  
-this.entry = function() {
-    if(gameInPouse == false) {
-//    clearAllVarsFunc();
-    playAudioFoneFunc();
-    setPlayerPositionFunc();
-//    levelSet(1);
-    }
-    StartWithCheckPoint = false;
-    gameInPouse = false;
-}
+    
 backGorund = setBackGroundFunc();
 //
 var mapLevel =  [
@@ -417,6 +408,18 @@ OOP.forArr(enemiesMap.level, function (string, y){
     });
 });
 starsToCompliteLevel = stars.length;
+    
+this.entry = function() {
+    if(gameInPouse == false) {
+//    clearAllVarsFunc();
+    playAudioFoneFunc();
+    setPlayerPositionFunc();
+//    levelSet(1);
+    }
+    StartWithCheckPoint = false;
+    gameInPouse = false;
+}
+
 //this.draw = function() {
 //
 //}
