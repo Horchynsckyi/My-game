@@ -1,6 +1,6 @@
 function Menu() {
 mouse.initMouseControl();
-
+//Объекты меню
 var startNew = game.newTextObject({
     text: 'Начать новую игру',
     size: 30,
@@ -14,7 +14,7 @@ var startWithCheckPoint = game.newTextObject({
     x: 0,
     y: screenHeight / 2 + 50,
 });
-
+//Центрируем Начать с точки быстого сохранения
 startWithCheckPoint.x = screenWidth / 2 - OOP.getTextWidth(startWithCheckPoint) / 2;
     this.draw = function() {
         game.clear();
@@ -22,26 +22,20 @@ startWithCheckPoint.x = screenWidth / 2 - OOP.getTextWidth(startWithCheckPoint) 
         startWithCheckPoint.draw();
     };
     this.update = function() {
-        if(checkPoint.playerSavedCheckPoint) startWithCheckPoint.color = 'green';
+        //Запускаем новую игру
         if(mouse.isPeekObject('LEFT', startNew) || (touch.isDown() && touch.isInObject(startNew))){
-            functionIsReady = false;
             levelNumber = 1;
-            game.startLoop('startGame');
+            game.startLoop('Level1');
         }
+        //Если игрок сохранялся разрешаем исользование загрузки
+        if(checkPoint.playerSavedCheckPoint) startWithCheckPoint.color = 'green';
         if(checkPoint.playerSavedCheckPoint == true && (mouse.isPeekObject('LEFT', startWithCheckPoint) || (touch.isDown() && touch.isInObject(startWithCheckPoint)))){
-            game.startLoop('startGame');
-            StartWithCheckPoint = true;
-            functionIsReady = false;
+            startWithCheckPoint();
         }
     }
 };
 var menu = new Menu();
-
-
 game.newLoop('menu', function() {
-
-    
 menu.draw();
 menu.update();
-    
 });
