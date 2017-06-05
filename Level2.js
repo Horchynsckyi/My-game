@@ -2,7 +2,7 @@ game.newLoopFromConstructor('Level2', function(){
 this.entry = function() {
     if(gameInPouse == false) {
     enemyWorm.inLevel = true;
-    levelSet(2);
+//    levelSet(2);
 //    clearAllVarsFunc();
     playAudioFoneFunc();
     backGorund = setBackGroundFunc();
