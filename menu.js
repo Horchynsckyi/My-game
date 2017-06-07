@@ -28,9 +28,9 @@ startWithCheckPoint.x = screenWidth / 2 - OOP.getTextWidth(startWithCheckPoint) 
             game.startLoop('Level1');
         }
         //Если игрок сохранялся разрешаем исользование загрузки
-        if(checkPoint.playerSavedCheckPoint) startWithCheckPoint.color = 'green';
-        if(checkPoint.playerSavedCheckPoint == true && (mouse.isPeekObject('LEFT', startWithCheckPoint) || (touch.isDown() && touch.isInObject(startWithCheckPoint)))){
-            startWithCheckPoint();
+        if(checkPoint.checkPointBeeSave) startWithCheckPoint.color = 'green';
+        if(checkPoint.checkPointBeeSave == true && (mouse.isPeekObject('LEFT', startWithCheckPoint) || (touch.isDown() && touch.isInObject(startWithCheckPoint)))){
+            startWithCheckPointFunc();
         }
     }
 };

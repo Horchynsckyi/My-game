@@ -1,298 +1,4 @@
-//Аудио для фана
-function levelSet(value) {
-    if(value == 1){
-    map.level = mapLevel1;
-    hideObjs.level = hideObjectLevel1;
-    starsMap.level = starsMapLevel1;
-    ladder.level = ladderLevel1;
-    decoration.level = decorationLevel1;
-    enemiesMap.level = enemiesMapLevel1;
-    OOP.forArr(map.level, function (string, y){
-    OOP.forArr(string, function (el, x){
-        var randomDecorationX = Math.ceil(Math.random() * 50)
-        if(!el || el == ' ' || el == 'n') return;
-        //Ground
-        if(el == '1') {
-        walls.push(game.newRectObject({
-                x : x * map.width,
-                y : y * map.height,
-                w : map.width,
-                h : map.height - 99,
-                fillColor: 'red',
-            }));
-        ground.push(game.newAnimationObject( { 
-                animation: map.image.getAnimation(map.tile[el].x, map.tile[el].y, 32, 32, 1),
-                x : x * map.width,
-                y : y * map.height,
-                w : map.width,
-                h : map.height, 
-                userData: {
-                    isGround: true,
-                }
-            }));
-        }
-        if(el == '0') {
-        ground.push(game.newAnimationObject( { 
-                animation: map.image.getAnimation(map.tile[el].x, map.tile[el].y, 32, 32, 1),
-                x : x * map.width,
-                y : y * map.height,
-                w : map.width,
-                h : map.height, 
-                userData: {
-                    isGround: true,
-                }
-            }));
-        }
-        if(el == '2') {
-        ground.push(game.newAnimationObject( { 
-                animation: map.image.getAnimation(map.tile[el].x, map.tile[el].y, 25, 30, 1),
-                x : x * map.width,
-                y : y * map.height,
-                w : map.width,
-                h : map.height, 
-                userData: {
-                    isLevelEnd: false,
-                }
-            }));
-        }
-    });
-});
-OOP.forArr(hideObjs.level, function (string, y){
-    OOP.forArr(string, function (el, x){
-        var randomDecorationX = Math.ceil(Math.random() * 100)
-        if(!el || el == ' ' || el == 'n') return;
-        //Decoration
-        if(el == 'w') {
-        hidingObjects.push(game.newAnimationObject( { 
-            animation: map.image.getAnimation(hideObjs.tile[el].x, hideObjs.tile[el].y, 16, 25, 1),
-            x : x * map.width + randomDecorationX,
-            y : y * map.height + 60,
-            w : map.width - 60,
-            h : map.height - 60, 
-            }));
-        hidingObjects[hidingObjects.length - 1].setFlip(Math.floor(Math.random() * 2), 0);
-        }
-        if(el == 'u') {
-        hidingObjects.push(game.newAnimationObject( { 
-            animation: map.image.getAnimation(hideObjs.tile[el].x, hideObjs.tile[el].y, 25, 30, 1),
-            x : x * map.width + randomDecorationX,
-            y : y * map.height + 50,
-            w : 45,
-            h : 50, 
-            }));
-        hidingObjects[hidingObjects.length - 1].setFlip(Math.floor(Math.random() * 2), 0);
-        }
-    });
-});
-OOP.forArr(starsMap.level, function (string, y){
-    OOP.forArr(string, function (el, x){
-        if(!el || el == ' ' || el == 'n') return;
-        //Decoration
-        if(el == 's') {
-        stars.push(game.newImageObject( { 
-            file: "Textures/Stars/starGold.png",
-            x : x * map.width + 25,
-            y : y * map.height + 70,
-            w : 20,
-            h : 20, 
-            }));
-        }
-    });
-});
-OOP.forArr(ladder.level, function (string, y){
-    OOP.forArr(string, function (el, x){
-        if(!el || el == ' ' || el == 'n') return;
-        if(el == 'l') {
-        ladders.push(game.newAnimationObject( { 
-            animation: map.image.getAnimation(ladder.tile[el].x, ladder.tile[el].y, 16, 32, 1),
-            x : x * map.width,
-            y : y * map.height,
-            w : map.width - 60,
-            h : map.height, 
-            userData: {
-                isLadder: true,
-                }
-            }));
-        }
-        if(el == 'r') {
-        ladders.push(game.newAnimationObject( { 
-            animation: map.image.getAnimation(ladder.tile[el].x, ladder.tile[el].y, 16, 32, 1),
-            x : x * map.width + 60,
-            y : y * map.height,
-            w : map.width - 60,
-            h : map.height, 
-            userData: {
-                isLadder: true,
-                }
-            }));
-        };
-    });
-});
-OOP.forArr(decoration.level, function (string, y){
-    OOP.forArr(string, function (el, x){
-        var randomDecorationX = Math.ceil(Math.random() * 50)
-        if(!el || el == ' ' || el == 'n') return;
-        //Decoration
-        if(el == 'd') {
-        decorations.push(game.newAnimationObject( { 
-            animation: map.image.getAnimation(decoration.tile[el].x, decoration.tile[el].y, 16, 25, 1),
-            x : x * decoration.width,
-            y : y * decoration.height + 60,
-            w : map.width - 60,
-            h : map.height - 60, 
-            userData: {
-                isInformationObject: true,
-                informationNumber: informationValue,
-            }
-            }));
-        decorations[decorations.length - 1].setFlip(Math.floor(Math.random() * 2), 0);
-        informationValue++;
-        }
-        if(el == 'v') {
-        decorations.push(game.newAnimationObject( { 
-            animation: map.image.getAnimation(decoration.tile[el].x, decoration.tile[el].y, 16, 8, 1),
-            x : x * decoration.width + randomDecorationX,
-            y : y * decoration.height + 60,
-            w : map.width - 60,
-            h : map.height - 60, 
-            }));
-        decorations[decorations.length - 1].setFlip(Math.floor(Math.random() * 2), 0);
-        }
-        if(el == '_') {
-        decorations.push(game.newAnimationObject( { 
-            animation: map.image.getAnimation(decoration.tile[el].x, decoration.tile[el].y, 25, 13, 1),
-            x : x * decoration.width + randomDecorationX - 50,
-            y : y * decoration.height + 65,
-            w : map.width - 20,
-            h : map.height - 60, 
-            }));
-        decorations[decorations.length - 1].setFlip(Math.floor(Math.random() * 2), 0);
-        }
-        if(el == 't') {
-        decorations.push(game.newAnimationObject( { 
-            animation: map.image.getAnimation(decoration.tile[el].x, decoration.tile[el].y, 16, 31, 1),
-            x : x * decoration.width + randomDecorationX - 20,
-            y : y * decoration.height - 20,
-            w : map.width - 60,
-            h : map.height - 40, 
-            scale: 2,
-            }));
-        decorations[decorations.length - 1].setFlip(Math.floor(Math.random() * 2), 0);
-        }
-        if(el == 'm') {
-        decorations.push(game.newAnimationObject( { 
-            animation: map.image.getAnimation(decoration.tile[el].x, decoration.tile[el].y, 16, 10, 1),
-            x : x * decoration.width + randomDecorationX - 20,
-            y : y * decoration.height + 85,
-            w : 16,
-            h : 10, 
-            scale: 2,
-            }));
-        decorations[decorations.length - 1].setFlip(Math.floor(Math.random() * 2), 0);
-        }
-        if(el == '|') {
-        decorations.push(game.newAnimationObject( { 
-            animation: map.image.getAnimation(decoration.tile[el].x, decoration.tile[el].y, 10, 15, 1),
-            x : x * decoration.width + randomDecorationX - 20,
-            y : y * decoration.height + 95,
-            w : 10,
-            h : 5, 
-            scale: 2,
-            }));
-        decorations[decorations.length - 1].setFlip(Math.floor(Math.random() * 2), 0);
-        }
-    });
-});
-var eWolfAnimationMove = tiles.newImage("img/enemies/wolf.png").getAnimation(320, 96, 64, 30, 5),
-    eWolfAanimationSleep = tiles.newImage("img/enemies/wolf.png").getAnimation(320, 0, 64, 30, 4);
-OOP.forArr(enemiesMap.level, function (string, y){
-    OOP.forArr(string, function (el, x){
-        //Звуки волков
-    var eWolfMoveRightHide = pjs.audio.newAudio("audio/eWolf/wolfMoveRight.mp3", 0.5),
-        eWolfMoveLeftHide = pjs.audio.newAudio("audio/eWolf/wolfMoveLeft.mp3", 0.5),
-        eWolfHuntingMode = pjs.audio.newAudio("audio/eWolf/wolfHuntingMode.mp3", 0.7),
-        eWolfMoveRightBaysick = {
-            "eWolfMoveRightBaysick1": pjs.audio.newAudio("audio/eWolf/wolfMoveRightBaysick1.mp3", 0),
-            "eWolfMoveRightBaysick2": pjs.audio.newAudio("audio/eWolf/wolfMoveRightBaysick2.mp3", 0),
-            "eWolfMoveRightBaysick3": pjs.audio.newAudio("audio/eWolf/wolfMoveRightBaysick3.mp3", 0),
-        }
-        eWolfMoveLeftBaysick = {
-            "eWolfMoveLeftBaysick1": pjs.audio.newAudio("audio/eWolf/wolfMoveLeftBaysick1.mp3", 0),
-            "eWolfMoveLeftBaysick2": pjs.audio.newAudio("audio/eWolf/wolfMoveLeftBaysick2.mp3", 0),
-            "eWolfMoveLeftBaysick3": pjs.audio.newAudio("audio/eWolf/wolfMoveLeftBaysick3.mp3", 0),
-        }
-        if(!el || el == ' ') return;
-        if(el == 'w'){
-        eWolf.push(game.newAnimationObject({
-              animation : tiles.newImage("img/enemies/wolf.png").getAnimation(320, 96, 64, 30, 5),
-              x : x * map.width,
-              y : y * map.height + 70,
-              w : 70, 
-              h : 30, 
-              delay: 10,
-              visible : true,
-              userData: {
-                  speedX: 0,
-                  huntingMode: false,
-                  moveR: true,
-                  playWolfMoveRight: false,
-                  playWolfMoveLeft: false,
-                  playCounter: 0,
-                  audioMoveRightHide: eWolfMoveRightHide,
-                  audioMoveLeftHide: eWolfMoveLeftHide,
-                  audioHuntingMode: eWolfHuntingMode,
-                  audioMoveLeftBaysick: eWolfMoveLeftBaysick,
-                  audioMoveRightBaysick: eWolfMoveRightBaysick,
-                  playCounterBaysick: 0,
-                  volumeForMoveBaysick: 0,
-                  volumeFixerHide: 1,
-              }
-            }));
-        }
-        if(el == '|'){
-        eWolfWalls.push(game.newRectObject({
-            x : x * map.width,
-            y : y * map.height,
-            w : 1,
-            h : map.height,
-            fillColor: 'red',
-            userData: {
-                isWall: true,
-            }
-            }));
-        }
-        if(el == '/'){
-        eWolfWalls.push(game.newRectObject({
-            x : x * map.width + 99,
-            y : y * map.height,
-            w : 1,
-            h : map.height,
-            fillColor: 'red',
-            userData: {
-                isWall: true,
-            }
-            }));
-            
-        }
-    });
-});
-starsToCompliteLevel = stars.length;
-    }
-}
-function playAudioFoneFunc() {
-    var foneMusick = pjs.audio.newAudio("audio/fone/foneMusick.mp3", 0.1),
-    foneForestSong = pjs.audio.newAudio("audio/fone/foneForestSong.mp3", 0.2);
-    foneMusick.play();
-    foneForestSong.play();
-    setInterval(function() {
-    //Аудио проигрывается опять через определенное время
-    foneMusick.replay();
-    }, 68 * 1000);
-    setInterval(function() {
-        foneForestSong.replay();
-    }, 600 * 1000);
-}
-//
+
 ////Задаём задний фон
 function setBackGroundFunc(){
 var backGround = [];
@@ -338,17 +44,20 @@ for(x = 0; x<15; x++){
 };
 return backGround;
 }
-//Назначаем игру его позицыю в зависмости от уровня
-function setPlayerPositionFunc() {
-    if(levelNumber == 1) {
-        player.x = 300;
-        player.y = 350;
-    }
-    if(levelNumber == 2) {
-        player.x = 2100;
-        player.y = 500;
-    }
+function playAudioFoneFunc() {
+    foneMusick.play();
+    foneForestSong.play();
+    setInterval(function() {
+    //Аудио проигрывается опять через определенное время
+    foneMusick.replay();
+    }, 68 * 1000);
+    setInterval(function() {
+        foneForestSong.replay();
+    }, 600 * 1000);
 }
+//
+//Назначаем игру его позицыю в зависмости от уровня
+//
 function clearAllVarsFunc() {
     player.energy = 100;
     player.levelComplite = 0;
@@ -364,6 +73,67 @@ function clearAllVarsFunc() {
     informationCounter = 0;
     starsToCompliteLevel = 0; 
 }
+function brushObjectsFunc() {
+brush.drawTextS({
+    x : 50,
+    y : 25,
+    text : 'Енергия: ',
+    size : 20,
+    color : 'green'
+});
+brush.drawRectS({
+    x: 50,
+    y: 50,
+    w: 102,
+    h: 30,
+    strokeColor : "white",
+    strokeWidth : 2,
+});
+brush.drawRectS({
+    x: 52,
+    y: 52,
+    w: player.energy,
+    h: 28,
+    fillColor: 'green'
+});
+//LevelComplite?
+brush.drawRectS({
+    x: 50,
+    y: 100,
+    w: 100,
+    h: 30,
+    strokeColor : "white",
+    strokeWidth : 2,
+});
+brush.drawRectS({
+    x: 50,
+    y: 100,
+    w: player.levelComplite,
+    h: 30,
+    fillColor: 'white'
+});
+brush.drawTextS({
+    x : 50,
+    y : 80,
+    text : 'Уровень пройден на:',
+    size : 20,
+    color : 'white'
+});
+}
+function tuchScreenFunc() {
+goLeft.setPositionCS(point (100, screenHeight - 100));
+goRight.setPositionCS(point (200, screenHeight - 100));
+goDown.setPositionCS(point (300, screenHeight - 100));
+jumpAndUp.setPositionCS(point (screenWidth - 200, screenHeight - 100));
+doIt.setPositionCS(point (screenWidth - 100, screenHeight - 100));
+quickSave.setPositionCS(point (screenWidth - 100, 50));
+goRight.draw();
+goLeft.draw();
+jumpAndUp.draw();
+goDown.draw();
+doIt.draw();
+quickSave.draw();
+}
 //Функции быстрого сохранения (старт и сохранение);
 function startWithCheckPointFunc() {
     StartWithCheckPoint = true;
@@ -375,7 +145,7 @@ function startWithCheckPointFunc() {
     player.energy = checkPoint.energy;
     player.levelComplite = checkPoint.levelComplite;
     informationCounter = checkPoint.informationCounter;
-    game.startLoop('Level' + levelNumber);
+    game.startLoop('Level1');
 }
 function saveCheckPointFunc() {
     if(checkPoint.playerSavedCheckPoint) {
@@ -389,9 +159,9 @@ function saveCheckPointFunc() {
     checkPoint.informationCounter = informationCounter;
     checkPoint.playerSavedCheckPoint = false;
     checkPoint.startCounterCheckPointSaved = true;
+    checkPoint.checkPointBeeSave = true;
     }
     if(checkPoint.startCounterCheckPointSaved) {
-        log(checkPoint.counterCheckPointSaved);
         quickSave.text = 'Игра сохранена';
         quickSave.color = 'green';
         checkPoint.counterCheckPointSaved++;
@@ -408,11 +178,12 @@ function saveCheckPointFunc() {
 function controllFunc() {
     if(key.isPress('F1') || (touch.isDown() && touch.isInObject(quickSave))) {
         checkPoint.playerSavedCheckPoint = true;
-        saveCheckPoint();
+        saveCheckPointFunc();
     }
     //
     if((key.isDown('D') || key.isDown('RIGHT')) || (touch.isDown() && touch.isInObject(goRight)) && player.hide == false) {
     player.setFlip(0, 0);
+    player.see = 60;
     playerMove.setFlip(0, 0);
         if((key.isDown('SHIFT') || (touch.isDown() && touch.isInObject(doIt))) && player.energy > 0) {
             player.speedX = 1.5;
@@ -420,6 +191,7 @@ function controllFunc() {
         } else player.speedX = 1;
     } else if((key.isDown('A') || key.isDown('LEFT') || (touch.isDown() && touch.isInObject(goLeft)) && player.hide == false)) {
     player.setFlip(1, 0);
+    player.see = -60;
     playerMove.setFlip(1, 0);
         if((key.isDown('SHIFT') || (touch.isDown() && touch.isInObject(doIt))) && player.energy > 0) {
             player.speedX = -1.5;
@@ -430,6 +202,7 @@ function controllFunc() {
     }
 }
 function eWormFunc() {
+
 if(enemyWorm.inLevel == true) {
     if(enemyWorm.setRandomHideTime == true){
         enemyWorm.randomHideTime = 100 + Math.ceil(Math.random() * 1000);
@@ -438,14 +211,15 @@ if(enemyWorm.inLevel == true) {
     enemyWorm.timeBlink++;
     if(enemyWorm.timeBlink >= 100) {
         if(enemyWorm.timeBlink == 100) {
-            var randomPosition = Math.floor(Math.random() * (walls.length));
-            enemyWorm.x = walls[randomPosition].x + 20;
-            enemyWorm.y = walls[randomPosition].y - 50;
+            enemyWorm.randomPosition = Math.floor(Math.random() * (walls.length));
+            enemyWorm.x = walls[enemyWorm.randomPosition].x + 20;
+            enemyWorm.y = walls[enemyWorm.randomPosition].y - 20;
         }
         enemyWorm.timeCrawsOutAnimation++;
         if(enemyWorm.timeCrawsOutAnimation == 40 + enemyWorm.randomHideTime){
             enemyWorm.setAnimation(enemyWormCrawsOutAnimation);
-            enemyWorm.h = 40;
+            enemyWorm.h = 70;
+            enemyWorm.y = walls[enemyWorm.randomPosition].y - 60;
         }
         if(enemyWorm.timeCrawsOutAnimation == 100 + enemyWorm.randomHideTime){
             enemyWorm.setAnimation(enemyWormStandAnimation);
@@ -455,7 +229,8 @@ if(enemyWorm.inLevel == true) {
             enemyWorm.setAnimation(enemyWormHideAnimation);
         }
         if(enemyWorm.timeHideAnimation == 560 + enemyWorm.randomHideTime){
-            enemyWorm.h = 10;
+            enemyWorm.y = walls[enemyWorm.randomPosition].y - 20;
+            enemyWorm.h = 30;
             enemyWorm.timeBlink = 0;
             enemyWorm.timeCrawsOutAnimation = 0;
             enemyWorm.timeHideAnimation = 0;
@@ -469,18 +244,18 @@ if(enemyWorm.inLevel == true) {
 }
 }
 function setCameraPosirionFunc() {
-camera.setPositionC(point(player.x, player.y));
+camera.setPositionC(point(player.getPositionC().x, player.getPositionC().y));
 }
 function laddersFunc() {
 for(var i = 0; i < ladders.length; i++) {
     if(ladders[i].isStaticIntersect(player)) {
     player.inLadder = true;
     player.inGround = true;
-        if((key.isDown('W') || key.isDown('UP') || (touch.isDown() && touch.isInObject(jumpAndUp))) && (player.y + player.h - 1 > ladders[i].y) && (player.x > ladders[i].x && player.x - 10 < ladders[i].x)) {
+        if((key.isDown('W') || key.isDown('UP') || (touch.isDown() && touch.isInObject(jumpAndUp))) && (player.y + player.h - 1 > ladders[i].y) && (player.getPositionC().x + 10 > ladders[i].getPositionC().x && player.getPositionC().x - 10 < ladders[i].getPositionC().x)) {
             player.speedY = -1;
-        } else if((key.isDown('S') || key.isDown('DOWN') || (touch.isDown() && touch.isInObject(goDown))) && (player.y - 10 < ladders[i].y) && (player.x > ladders[i].x && player.x - 10 < ladders[i].x)) {
+        } else if((key.isDown('S') || key.isDown('DOWN') || (touch.isDown() && touch.isInObject(goDown))) && (player.y - 10 < ladders[i].y) && (player.getPositionC().x + 10 > ladders[i].getPositionC().x && player.getPositionC().x - 10 < ladders[i].getPositionC().x)) {
             player.speedY = 1;
-        } else if((key.isDown('E') || (touch.isDown() && touch.isInObject(doIt))) && (player.x > ladders[i].x && player.x - 10 < ladders[i].x)) {
+        } else if((key.isDown('E') || (touch.isDown() && touch.isInObject(doIt))) && (player.getPositionC().x + 10 > ladders[i].getPositionC().x && player.getPositionC().x - 10 < ladders[i].getPositionC().x)) {
             player.speedY = 0;
         }else {
         player.inLadder = false;
@@ -500,7 +275,7 @@ for(var i = 0; i < decorations.length; i++) {
 function hideFunc() {
     for(var i = 0; i < hidingObjects.length; i++) {
         if(hidingObjects[i].isStaticIntersect(player)) {
-            if((key.isDown('E') || (touch.isDown() && touch.isInObject(doIt))) && (player.x + 3 > hidingObjects[i].x && player.x - 18 < hidingObjects[i].x) && player.speedX == 0) {
+            if((key.isDown('E') || (touch.isDown() && touch.isInObject(doIt))) && (player.getPositionC().x + 10 > hidingObjects[i].getPositionC().x && player.getPositionC().x - 10 < hidingObjects[i].getPositionC().x) && player.speedX == 0) {
             player.hide = true;
             player.inGround = true;
             player.speedY = 0;
@@ -533,11 +308,8 @@ for(var i = 0; i < stars.length; i++) {
 function levelEndFunc() {
 for(var i = 0; i < ground.length; i++) {
     if(player.isStaticIntersect(ground[i]) && ground[i].isLevelEnd == true) {
-        if(levelNumber == 1) {
             levelNumber++;
-            functionIsReady = false;
-            game.startLoop('startGame');
-        }
+            game.startLoop('Level1');
 }
 }
 }
@@ -547,7 +319,7 @@ function gravitiFunc() {
         if(!walls[i].isStaticIntersect(player)){
             player.inGround = false;
         } else if ((walls[i].isStaticIntersect(player))){
-            if(player.speedY >= 5) game.startLoop('menu');
+            if(player.speedY >= 6) game.startLoop('menu');
                 if(key.isPress('W') || key.isPress('UP') || (touch.isPress() && touch.isInObject(jumpAndUp))) {
                     player.speedY = -3;
                 } else {            
@@ -562,8 +334,19 @@ if(player.inGround == false && player.inLadder == false) {
     player.speedY += 0.2;
 }
 }
+function huntingModeFunc() {
+    for(var i = 0; i < eWolf.length; i++) {
+        if(eWolf[i].huntingMode == true) return true;
+    }
+    return false;
+}
 function wolfsFunc() {
 for(var i = 0; i < eWolf.length; i++) {
+    if(huntingModeFunc()) {
+        eWolfHuntingMode.play();
+    } else {
+        eWolfHuntingMode.stop();
+    }
     eWolf[i].x += eWolf[i].speedX;
     if(eWolf[i].speedX > 0) {
         eWolf[i].setFlip(0, 0);
@@ -578,11 +361,8 @@ for(var i = 0; i < eWolf.length; i++) {
         else if(eWolf[i].moveR == false) eWolf[i].speedX = -1.2;
     }
     if(eWolf[i].huntingMode == true) {
-        eWolf[i].audioHuntingMode.play(0.7);
-        if(eWolf[i].flip.x == 0) eWolf[i].speedX = 3;
-        else if(eWolf[i].flip.x == 1) eWolf[i].speedX = -3;
-    } else {
-        eWolf[i].audioHuntingMode.stop();
+        if(eWolf[i].moveR == true) eWolf[i].speedX = 3;
+        else if(eWolf[i].moveR == false) eWolf[i].speedX = -3;
     }
     if(eWolf[i].isStaticIntersect(player) && player.hide == false) {
         eWolf[i].audioHuntingMode.stop();
@@ -598,10 +378,10 @@ for(var i = 0; i < eWolf.length; i++) {
             eWolf[i].moveR = true;
         }
     }
-        if(((eWolf[i].moveR == true && player.x < eWolf[i].x && player.x >= eWolf[i].x - 80) || ((eWolf[i].moveR == true && player.x > eWolf[i].x && player.x <= eWolf[i].x + 150)) || (eWolf[i].moveR == false && player.x > eWolf[i].x && player.x <= eWolf[i].x + 80) || (eWolf[i].moveR == false && player.x < eWolf[i].x && player.x >= eWolf[i].x - 120)) && (player.hide == false && player.y >= eWolf[i].y - 30 && player.y <= eWolf[i].y + 30)) {
+        if(((eWolf[i].moveR == true && player.getPositionC().x < eWolf[i].getPositionC().x && player.getPositionC().x >= eWolf[i].getPositionC().x - 80) || ((eWolf[i].moveR == true && player.getPositionC().x > eWolf[i].getPositionC().x && player.getPositionC().x <= eWolf[i].getPositionC().x + 130)) || (eWolf[i].moveR == false && player.getPositionC().x > eWolf[i].getPositionC().x && player.getPositionC().x <= eWolf[i].getPositionC().x + 80) || (eWolf[i].moveR == false && player.getPositionC().x < eWolf[i].getPositionC().x && player.getPositionC().x >= eWolf[i].getPositionC().x - 130)) && (player.hide == false && player.y >= eWolf[i].y - 30 && player.y <= eWolf[i].y + 30)) {
             
-        if(player.x > eWolf[i].x) eWolf[i].moveR = true;
-        else if (player.x < eWolf[i].x) eWolf[i].moveR = false;
+            if(player.x > eWolf[i].x) eWolf[i].moveR = true;
+            else if (player.x < eWolf[i].x) eWolf[i].moveR = false;
             
         eWolf[i].huntingMode = true;
         } else {
@@ -629,7 +409,7 @@ for(var i = 0; i < eWolf.length; i++) {
         }
     }
     //Ситывает насколько далеко игрок и в зависимости от этого задает громкость волку (по вертикали и горизонтали)
-    eWolf[i].volumeForMoveBaysick = (eWolf[i].x - player.x);
+    eWolf[i].volumeForMoveBaysick = (eWolf[i].getPositionC().x - player.getPositionC().x);
     eWolf[i].playCounterBaysick++
     function randomAudioMovePlay() {
         return Math.ceil(Math.random() * 3);
@@ -719,66 +499,329 @@ if(player.energyTimer > 200 && player.energy < 100) {
     player.energy += 0.5;
 }
 }
-function brushObjectsFunc() {
-brush.drawTextS({
-    x : 50,
-    y : 25,
-    text : 'Енергия: ',
-    size : 20,
-    color : 'green'
-});
-brush.drawRectS({
-    x: 50,
-    y: 50,
-    w: 102,
-    h: 30,
-    strokeColor : "white",
-    strokeWidth : 2,
-});
-brush.drawRectS({
-    x: 52,
-    y: 52,
-    w: player.energy,
-    h: 28,
-    fillColor: 'green'
-});
-//LevelComplite?
-brush.drawRectS({
-    x: 50,
-    y: 100,
-    w: 100,
-    h: 30,
-    strokeColor : "white",
-    strokeWidth : 2,
-});
-brush.drawRectS({
-    x: 50,
-    y: 100,
-    w: player.levelComplite,
-    h: 30,
-    fillColor: 'white'
-});
-brush.drawTextS({
-    x : 50,
-    y : 80,
-    text : 'Уровень пройден на:',
-    size : 20,
-    color : 'white'
-});
+function setLevelFunc() {
+//Объявляем карту уровня:
+if(StartWithCheckPoint == true) {
+    levelNumber = checkPoint.levelNumber;
 }
-function tuchScreenFunc() {
-goLeft.setPositionCS(point (100, screenHeight - 100));
-goRight.setPositionCS(point (200, screenHeight - 100));
-goDown.setPositionCS(point (300, screenHeight - 100));
-jumpAndUp.setPositionCS(point (screenWidth - 200, screenHeight - 100));
-doIt.setPositionCS(point (screenWidth - 100, screenHeight - 100));
-quickSave.setPositionCS(point (screenWidth - 100, 50));
-goRight.draw();
-goLeft.draw();
-jumpAndUp.draw();
-goDown.draw();
-doIt.draw();
-quickSave.draw();
+//Указываем карты уровня
+if(levelNumber == 1) {
+    player.x = 300;
+    player.y = 400;
+    var mapLevel =  [
+        '      ',
+        'nnnnnnnnnnnnnnnnnnnnnnnnnn2nnnnnwnnnnnn',
+        '00nnnnnv_ndnnnnnnnnnnnnnn1111w11111n000',
+        '00nnnd111111vww_11111dnnnn0011111111000',
+        '00111110000111111000111nnwnnnwn11111000',
+        '0000000000000000000000111111111nnn11000',
+        '00000000000000001nnnnn00000000111110000',
+        '0000000000000001111nn111nnnnnnn11100000',
+        '000000000000111111111111111111110000000',
+        '000000000000000000000000000000000000000',
+        '000000000000000000000000000000000000000',
+        '111111111111111111111111111111111111111',
+    ],
+        hideObjectLevel =  [
+        '      ',
+        'nnnnnnnnnnnnnnnnnnnnnnnnnn2nnnnnwnnnnnn',
+        '00nnnnnv_ndnnnnnnnnnnnnnn1111w11111n000',
+        '00nwnd111111vww_11111dnnnn0011111111000',
+        '00111110000111111000111nnunnnwn11111000',
+        '0000000000000000000000111111111nnn11000',
+        '000000000000000ww1/nnn00000000111110000',
+        '000000000000|u01w1/0011|nwnnunn/1100000',
+        '000000000000111111111111111111110000000',
+        '000000000000000000000000000000000000000',
+    ],
+        starsMapLevel =  [
+        '      ',
+        'nnnnnnnnnnnnnnnnnnnnnnnnnn2nnnnnwsnnnnn',
+        '00nnnnnv_ndnnnnnnnnnnnnnn1111ws1111n000',
+        '00nvnd111111vww_11111dnnnn0011111111000',
+        '00111110000111111000111nnwnnnwn111s1000',
+        '0000000000000000s00000111111111nnn11000',
+        '00000000000000001nnnnns0000000111s10000',
+        '000000000000s001111001s1nnnnnnn11100000',
+        '000000000000111111111111111111110000000',
+        '000000000000000000000000000000000000000',
+    ],
+        ladderLevel = [
+        '      ',
+        'nnnnnnnnnnnnnnnnnnnnnnnnnn2nnnnnnnnnnnn',
+        '00nnnnnv_ndnnnnnnnnnnnnnn111rnlnnnrn000',
+        '00nvndl1111rvww_l111rdnnnn00111rnnrn000',
+        '0011111000011111100011rnnwnnnwn1111r000',
+        '000000000000000000000011111111rnnnl1000',
+        '0000000000000000r000000000000011l110000',
+        '000000000000000l1r100l1rnnnnnnnl1100000',
+        '000000000000111111111111111111110000000',
+        '000000000000000000000000000000000000000',
+    ],
+        decorationLevel = [
+        '      ',
+        'nnnnnnnnnnnnnnnnnnnnnnnnnmv|nn|vtmtnnn',
+        'nnnnnn|v_tdmnnnnm|tv_nnnnn11mv_mnvnv000',
+        'nntvmdv1111mvm|_t111ltdnnn00111vv_tm000',
+        'nn11111000011111100011n_v_mmt|v1111_000',
+        '000000000000000000000011111111|m_vm1000',
+        '000000000000000v_|v00v_00000001v1v10000',
+        '000000000000t_m1111t_111vtm_||tm1100000',
+        '000000000000111111111111111111110000000',
+        '000000000000000000000000000000000000000',
+    ],
+        enemiesMapLevel =  [
+        '      ',
+        'nnnnnnnnnnnnnnnnnnnnnnnnnnnnnn|wnn/nnnn',
+        '00nnnnnnnnnnnnnnnnnnnnnnnn11|nwnwnw/000',
+        '00nnnnn1111|nnwn/111lnnnnn00111|nwn/000',
+        '0011111000011111100011|nnwnwnn/1111l000',
+        '000000000000000000000011111111lnnnr1000',
+        '000000000000000|w1/nnn00000000111110000',
+        '000000000000|001w1/0011|nwnnnnn/1100000',
+        '000000000000111111111111111111110000000',
+        '000000000000000000000000000000000000000',
+    ];  
+} else if(levelNumber == 2) {
+    player.x = 2100;
+    player.y = 500;
+    enemyWorm.inLevel = true;
+    var mapLevel =  [
+        '      ',
+        '                         2            ',
+        '                       1111         00',
+        '     1111111           1111   11111 00',
+        '    110111111 1111       0111110000 00',
+        '    10001111111 01111111  110111111100',
+        '   11111 11     111111     00     1100',
+        '  11111111111111100101111111   1111100',
+        '           111011111100111100111100100',
+        '        111111111111111111111100111100',
+        '000000000000000000000000000000000000000',
+        '111111111111111111111111111111111111111',
+    ],
+        hideObjectLevel =  [
+        '      ',
+        '                         2            ',
+        '         u             1111     wu  00',
+        '     1111111           1111 w 11111 00',
+        '    110111w11 1111       0111110u00 00',
+        '    1u0 1111111001w11111  110111111100',
+        '   1w111 11 u   111111     000   u1100',
+        '  111111111111111w01011111110  1111100',
+        '         u 1w1011u111w0111100111100100',
+        '        111111111111111111111100111100',
+    ],
+        starsMapLevel =  [
+        '      ',
+        '                         2            ',
+        '                       1s11       s 00',
+        '     1111s11           1111   11111 00',
+        '    1101s1111 1111    s  0s11110000s00',
+        '   s100s1s11111 0s11s111  110111111100',
+        '  s11111 11   s 111s11s  s 00     1100',
+        '  111111111111111001s1111111   1111100',
+        '        s  1110111s110011s1001111ss100',
+        '        111111111111111111111100111100',
+    ],
+        ladderLevel = [
+        '      ',
+        '                         2            ',
+        '                       r11r         00',
+        '     l11111r           111r   l1111 00',
+        '    l1011111r l11r       01l1r10000 00',
+        '    r00 11111110011l1111  11011111r100',
+        '   111l1 lr     l11111     000    1l00',
+        '  11111111111l11100l0111r1110  l111l00',
+        '           r1l01r111100l11100l11r00l00',
+        '        111111111111111111111100111100',
+    ],
+        decorationLevel = [
+        '      ',
+        '                       v_t            ',
+        '     mm  _t            |v_1   v_ttm 00',
+        '     |1_vm|v   _t      111v_tm11111 00',
+        '    v101|t1v1m1111v   v  0v11||mv_t 00',
+        '   v1_0011t1111 01|_vt11  11011111|100',
+        '  tvm_|vmv|vtv_m_11t1_v  v_0   t v|100',
+        '  111111111_v|11v00v0m1t|v11 t_|m_m100',
+        '          vm|v_||mv_|00m_tvvvm11|v_100',
+        '        111111111111111111111100111100',
+    ],
+        enemiesMapLevel =  [
+        '      ',
+        '                         2            ',
+        '     |  w  /           |1w/   |w  / 00',
+        '     |11111/           111| w /111  00',
+        '    110/ 1w11 /111       0111|10w00/00',
+        '   |1w0/1111111/  w11/11  110111111100',
+        '  |1w111 11 w   /1111|  w /00  | w1/00',
+        '  111111111111/11w01/11|1w/00  1111100',
+        '        |w 111011w111|w111/00/11|w0/00',
+        '        111111111111111111111100111100',
+    ];  
+}
+map.level = mapLevel;
+hideObjs.level = hideObjectLevel;
+starsMap.level = starsMapLevel;
+ladder.level = ladderLevel;
+decoration.level = decorationLevel;
+enemiesMap.level = enemiesMapLevel;
+//Массив земли
+OOP.forArr(map.level, function (string, y){
+    OOP.forArr(string, function (el, x){
+        if(!el || el == ' ' || el == 'n') return;
+        if(el == '1') {
+        walls.push(game.newRectObject({
+                x : x * map.width,
+                y : y * map.height,
+                w : map.width,
+                h : map.height - 99,
+                fillColor: 'red',
+            }));
+        ground.push(game.newAnimationObject(groundChar1));
+        mapPositionFunc(ground, x, y);
+        }
+        if(el == '0') {
+        ground.push(game.newAnimationObject(groundChar0));
+        mapPositionFunc(ground, x, y);
+        }
+        if(el == '2') {
+        ground.push(game.newAnimationObject(groundChar2));
+        mapPositionFunc(ground, x, y);
+        }
+    });
+});
+OOP.forArr(hideObjs.level, function (string, y){
+    OOP.forArr(string, function (el, x){
+        if(!el || el == ' ' || el == 'n') return;
+        if(el == 'w') {
+        hidingObjects.push(game.newAnimationObject(hideObjsCharW));
+        mapPositionFunc(hidingObjects, x, y);
+        randomDecorationFlipAndPositionFunc(hidingObjects);
+        }
+        if(el == 'u') {
+        hidingObjects.push(game.newAnimationObject(hideObjsCharU));
+        mapPositionFunc(hidingObjects, x, y);
+        randomDecorationFlipAndPositionFunc(hidingObjects);
+        }
+    });
+});
+OOP.forArr(starsMap.level, function (string, y){
+    OOP.forArr(string, function (el, x){
+        if(!el || el == ' ' || el == 'n') return;
+        //Decoration
+        if(el == 's') {
+        stars.push(game.newImageObject(starsCharS));
+        mapPositionFunc(stars, x, y);
+        }
+    });
+});
+OOP.forArr(ladder.level, function (string, y){
+    OOP.forArr(string, function (el, x){
+        if(!el || el == ' ' || el == 'n') return;
+        if(el == 'l') {
+        ladders.push(game.newAnimationObject(ladderCharL));
+        mapPositionFunc(ladders, x, y);
+        }
+        if(el == 'r') {
+        ladders.push(game.newAnimationObject(ladderCharR));
+        mapPositionFunc(ladders, x, y);
+        };
+    });
+});
+OOP.forArr(decoration.level, function (string, y){
+    OOP.forArr(string, function (el, x){
+        var randomDecorationX = Math.ceil(Math.random() * 50)
+        if(!el || el == ' ' || el == 'n') return;
+        //Decoration
+        if(el == 't') {
+        decorations.push(game.newAnimationObject(decorationCharT));
+        mapPositionFunc(decorations, x, y);
+        randomDecorationFlipAndPositionFunc(decorations);
+        }
+        if(el == 'd') {
+        decorations.push(game.newAnimationObject(decorationCharD));
+        mapPositionFunc(decorations, x, y);
+        randomDecorationFlipAndPositionFunc(decorations);
+        informationValue++;
+        }
+        if(el == 'v') {
+        decorations.push(game.newAnimationObject(decorationCharV));
+        mapPositionFunc(decorations, x, y);
+        randomDecorationFlipAndPositionFunc(decorations);
+        }
+        if(el == '_') {
+        decorations.push(game.newAnimationObject(decorationChar_));
+        mapPositionFunc(decorations, x, y);
+        randomDecorationFlipAndPositionFunc(decorations);
+        }
+        if(el == 'm') {
+        decorations.push(game.newAnimationObject(decorationCharM));
+        mapPositionFunc(decorations, x, y);
+        randomDecorationFlipAndPositionFunc(decorations);
+        }
+        if(el == '|') {
+        decorations.push(game.newAnimationObject(decorationCharI));
+        mapPositionFunc(decorations, x, y);
+        randomDecorationFlipAndPositionFunc(decorations);
+        }
+    });
+});
+OOP.forArr(enemiesMap.level, function (string, y){
+    OOP.forArr(string, function (el, x){
+        if(!el || el == ' ') return;
+        if(el == 'w'){
+        eWolf.push(game.newAnimationObject(enemyCharW))
+        mapPositionFunc(eWolf, x, y);
+        }
+        if(el == '|'){
+        eWolfWalls.push(game.newRectObject({
+            x : x * map.width,
+            y : y * map.height,
+            w : 1,
+            h : map.height,
+            fillColor: 'red',
+            userData: {
+                isWall: true,
+            }
+        }));
+        }
+        if(el == '/'){
+        eWolfWalls.push(game.newRectObject({
+            x : x * map.width + 99,
+            y : y * map.height,
+            w : 1,
+            h : map.height,
+            fillColor: 'red',
+            userData: {
+                isWall: true,
+            }
+        }));
+        }
+    });
+});
+if(StartWithCheckPoint == true) {
+    StartWithCheckPoint = false;
+    player.x = checkPoint.x;
+    player.y = checkPoint.y;
+    starsToCompliteLevel = checkPoint.starsToCompliteLevel;
+    stars = checkPoint.stars.slice();
+    player.energy = checkPoint.energy;
+    player.levelComplite = checkPoint.levelComplite;
+    informationCounter = checkPoint.informationCounter;
+}
+starsToCompliteLevel = stars.length;
+}
+//
+//Функция для размещения объктов 
+function mapPositionFunc(arr, x, y) {
+    arr[arr.length - 1].x += x * map.width;
+    arr[arr.length - 1].y += y * map.height;
+}
+function randomDecorationFlipAndPositionFunc(arr) {
+    arr[arr.length - 1].setFlip(Math.floor(Math.random() * 2), 0);
+    arr[arr.length - 1].x += Math.floor(Math.random() * 70);
 }
 //
 game.newLoopFromConstructor('Information', function() {

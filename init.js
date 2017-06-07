@@ -43,6 +43,7 @@ var gameInPouse = false,
         playerSavedCheckPoint: false,
         startCounterCheckPointSaved: false,
         counterCheckPointSaved: 0,
+        checkPointBeeSave: false,
     },
     //Игровые переменные
     backGorund = [],
@@ -66,6 +67,9 @@ var player = game.newAnimationObject({
         energyRegeneration: false,
         energyTimer: 0,
         levelComplite: 0,
+        see: 60,
+        hideLightValue: 0,
+        hideBlackValue: 0,
     },
     visible: true
 }),
@@ -93,11 +97,11 @@ var walls = [],
     starsToCompliteLevel = 0,
     //Объект врага черьвя
     enemyWorm = game.newAnimationObject({
-        animation: tiles.newImage('img/enemies/worm.png').getAnimation(0, 0, 32, 35, 1),
+        animation: tiles.newImage('img/enemies/wormHide.png').getAnimation(0, 0, 32, 35, 1),
         x: 0,
         y: 0,
-        w: 45,
-        h: 10,
+        w: 60,
+        h: 30,
         userData: {
             inLevel: false,
             timeBlink: 0,
@@ -106,267 +110,265 @@ var walls = [],
             randomHideTime: 0,
             setRandomHideTime: true,
             playCounter: 0,
+            randomPosition: 0,
         }
     }),
     //Анимации черьвя
     enemyWormCrawsOutAnimation = tiles.newImage('img/enemies/worm.png').getAnimation(0, 0, 32, 35, 8),
-    enemyWormStandAnimation = tiles.newImage('img/enemies/worm.png').getAnimation(4, 32, 32, 35, 6),
+    enemyWormStandAnimation = tiles.newImage('img/enemies/worm.png').getAnimation(4, 33, 32, 35, 6),
     enemyWormHideAnimation = tiles.newImage('img/enemies/worm.png').getAnimation(4, 64, 32, 35, 8),
-    enemyWormUnderGroundAnimation = tiles.newImage('img/enemies/worm.png').getAnimation(0, 0, 32, 35, 1);
+    enemyWormUnderGroundAnimation = tiles.newImage('img/enemies/wormHide.png').getAnimation(0, 0, 32, 35, 1),
+    //Волк
+    //Звуки волков
+    eWolfMoveRightHide = pjs.audio.newAudio("audio/eWolf/wolfMoveRight.mp3", 0.5),
+    eWolfMoveLeftHide = pjs.audio.newAudio("audio/eWolf/wolfMoveLeft.mp3", 0.5),
+    eWolfHuntingMode = pjs.audio.newAudio("audio/eWolf/wolfHuntingMode.mp3", 0.7),
+    eWolfMoveRightBaysick = {
+        "eWolfMoveRightBaysick1": pjs.audio.newAudio("audio/eWolf/wolfMoveRightBaysick1.mp3", 0),
+        "eWolfMoveRightBaysick2": pjs.audio.newAudio("audio/eWolf/wolfMoveRightBaysick2.mp3", 0),
+        "eWolfMoveRightBaysick3": pjs.audio.newAudio("audio/eWolf/wolfMoveRightBaysick3.mp3", 0),
+    },
+    eWolfMoveLeftBaysick = {
+        "eWolfMoveLeftBaysick1": pjs.audio.newAudio("audio/eWolf/wolfMoveLeftBaysick1.mp3", 0),
+        "eWolfMoveLeftBaysick2": pjs.audio.newAudio("audio/eWolf/wolfMoveLeftBaysick2.mp3", 0),
+        "eWolfMoveLeftBaysick3": pjs.audio.newAudio("audio/eWolf/wolfMoveLeftBaysick3.mp3", 0),
+    },
+    enemyWolfTile = tiles.newImage("img/enemies/wolf.png").getAnimation(320, 96, 64, 30, 5),
+    //Тайлы
+    mapTile = pjs.tiles.newImage('img/Tiles.png'),
+    starImage = 'Textures/Stars/starGold.png',
+    foneMusick = pjs.audio.newAudio("audio/fone/foneMusick.mp3", 0.1),
+    foneForestSong = pjs.audio.newAudio("audio/fone/foneForestSong.mp3", 0.2);
 //
 //Объекты для сенсорного экрана
 var goRight = game.newImageObject({
     file: 'img/controll/right.png',
-    w: 50,
-    h: 50,
-    x: player.x - 300,
-    y: player.y + 200,
+    w: 70,
+    h: 70,
 }),
     goLeft = game.newImageObject({
     file: 'img/controll/left.png',
-    w: 50,
-    h: 50,
-    x: player.x - 400,
-    y: player.y + 200,
+    w: 70,
+    h: 70,
 }),jumpAndUp = game.newImageObject({
     file: 'img/controll/left.png',
-    w: 50,
-    h: 50,
-    x: player.x + 250,
-    y: player.y + 300,
+    w: 70,
+    h: 70,
 }),goDown = game.newImageObject({
     file: 'img/controll/left.png',
-    w: 50,
-    h: 50,
-    x: player.x + 250,
-    y: player.y + 300,
+    w: 70,
+    h: 70,
 }),doIt = game.newCircleObject({
-    radius: 40,
+    radius: 50,
     fillColor: 'white',
     strokeColor: 'grey',
-    strokeWidth: 3,
-    x: player.x + 300,
-    y: player.y + 250,
-        
+    strokeWidth: 3,      
 }),quickSave = game.newTextObject({
     text: 'Быстрое сохрание',
     size: 15,
     color: 'grey',
-    x: player.x + 300,
-    y: player.y - 250,
 });
 jumpAndUp.turn(90);
 goDown.turn(270);
-//Уровни игры
+//setAllVars
+var map = {
+    width : 100,
+    height : 100,
+    image: mapTile,
+    level: null,
+    tile : {
+        //Ground objects
+        '1': point(121, 127.5),//Ground + wall
+        '0': point(289, 287),//Ground
+        '2': point(67, 80),//Level end
+    }
+},
+//Objects for hide
+    hideObjs = {
+    width: 40,
+    height: 40,
+    image: mapTile,
+    level: null,
+    tile : {
+        'w': point(240, 112),//Hide in shrab
+        'u': point(100, 80),//Hide in Colums
+    }
+},
+    starsMap = {
+    width: 10,
+    height: 10,
+    level: null,
+},
+//Ladders
+    ladder = {
+    width : 40,
+    height : 100,
+    image: mapTile,
+    level: null,
+    tile : {
+        //Ladders objects
+        'r': point(24, 113),//Ladder1 right
+        'l': point(24, 113),//ladder1 left
+    }
+},
+//Decorations
+    decoration = {
+    width: 40,
+    height: 40,
+    level: null,
+    tile: {
+        //Decoration Objects
+        'd': point(201, 104),//Decoration 1 'Information onject'
+        'v': point(288, 247),//Decoration 2 'grass'
+        '_': point(163, 100),//Decoration 3 'colum in ground'
+        't': point(272, 97),//Decoration 4 'fir-tree'
+        'm': point(415, 102),//Decoration 5 'boletuses'
+        '|': point(128, 88),//Decoration 6 'Colum1'
+    }
+},
+//Enemies
+    enemiesMap = {
+    w: 40,
+    h: 20,
+    level: null,
+};
+//Все объёкты в переменных
+var groundChar1 = {
+    animation: map.image.getAnimation(map.tile['1'].x, map.tile['1'].y, 32, 32, 1),
+        x : null,
+        y : null,
+        w : map.width,
+        h : map.height, 
+        userData: {
+            isGround: true,
+        },
+},groundChar0 = {
+    animation: map.image.getAnimation(map.tile['0'].x, map.tile['0'].y, 32, 32, 1),
+        x : null,
+        y : null,
+        w : map.width,
+        h : map.height, 
+},groundChar2 = {
+    animation: map.image.getAnimation(map.tile['2'].x, map.tile['2'].y, 25, 30, 1),
+        x : null,
+        y : null,
+        w : map.width,
+        h : map.height, 
+        userData: {
+            isLevelEnd: false,
+        }
+},
 //
-//var mapLevel1 =  [
-//    '      ',
-//    'nnnnnnnnnnnnnnnnnnnnnnnnnn2nnnnnwnnnnnn',
-//    '00nnnnnv_ndnnnnnnnnnnnnnn1111w11111n000',
-//    '00nvnd111111vww_11111dnnnn0011111111000',
-//    '00111110000111111000111nnwnnnwn11111000',
-//    '0000000000000000000000111111111nnn11000',
-//    '00000000000000001nnnnn00000000111110000',
-//    '000000000000000111100111nnnnnnn11100000',
-//    '000000000000111111111111111111110000000',
-//    '000000000000000000000000000000000000000',
-//],
-//    hideObjectLevel1 =  [
-//    '      ',
-//    'nnnnnnnnnnnnnnnnnnnnnnnnnn2nnnnnwnnnnnn',
-//    '00nnnnnv_ndnnnnnnnnnnnnnn1111w11111n000',
-//    '00nvnd111111vww_11111dnnnn0011111111000',
-//    '00111110000111111000111nnunnnwn11111000',
-//    '0000000000000000000000111111111nnn11000',
-//    '000000000000000ww1/nnn00000000111110000',
-//    '000000000000|u01w1/0011|nwnnunn/1100000',
-//    '000000000000111111111111111111110000000',
-//    '000000000000000000000000000000000000000',
-//],
-//    starsMapLevel1 =  [
-//    '      ',
-//    'nnnnnnnnnnnnnnnnnnnnnnnnnn2nnnnnwsnnnnn',
-//    '00nnnnnv_ndnnnnnnnnnnnnnn1111ws1111n000',
-//    '00nvnd111111vww_11111dnnnn0011111111000',
-//    '00111110000111111000111nnwnnnwn111s1000',
-//    '0000000000000000s00000111111111nnn11000',
-//    '00000000000000001nnnnns0000000111s10000',
-//    '000000000000s001111001s1nnnnnnn11100000',
-//    '000000000000111111111111111111110000000',
-//    '000000000000000000000000000000000000000',
-//],
-//    ladderLevel1 = [
-//    '      ',
-//    'nnnnnnnnnnnnnnnnnnnnnnnnnn2nnnnnnnnnnnn',
-//    '00nnnnnv_ndnnnnnnnnnnnnnn111rnlnnnrn000',
-//    '00nvndl1111rvww_l111rdnnnn00111rnnrn000',
-//    '0011111000011111100011rnnwnnnwn1111r000',
-//    '000000000000000000000011111111rnnnl1000',
-//    '0000000000000000r000000000000011l110000',
-//    '000000000000000l1r100l1rnnnnnnnl1100000',
-//    '000000000000111111111111111111110000000',
-//    '000000000000000000000000000000000000000',
-//],
-//    decorationLevel1 = [
-//    '      ',
-//    'nnnnnnnnnnnnnnnnnnnnnnnnnmv|nn|vtmtnnn',
-//    'nnnnnnnv_tdnnnnnn|tv_nnnnn11mv_mnvnv000',
-//    'nntvmdv1111mvm|_t111ltdnnn00111vv_tm000',
-//    'nn11111000011111100011n_v_mmt|v1111_000',
-//    '000000000000000000000011111111|m_vm1000',
-//    '000000000000000v_|v00v_00000001v1v10000',
-//    '000000000000t_m1111t_111vtm_||tm1100000',
-//    '000000000000111111111111111111110000000',
-//    '000000000000000000000000000000000000000',
-//],
-//    enemiesMapLevel1 =  [
-//    '      ',
-//    'nnnnnnnnnnnnnnnnnnnnnnnnnnnnnn|wnn/nnnn',
-//    '00nnnnnnnnnnnnnnnnnnnnnnnn11|nwnwnw/000',
-//    '00nnnnn1111|nnwn/111lnnnnn00111|nwn/000',
-//    '0011111000011111100011|nnwnwnn/1111l000',
-//    '000000000000000000000011111111lnnnr1000',
-//    '000000000000000|w1/nnn00000000111110000',
-//    '000000000000|001w1/0011|nwnnnnn/1100000',
-//    '000000000000111111111111111111110000000',
-//    '000000000000000000000000000000000000000',
-//],
-////Level2
-//    mapLevel2 =  [
-//    '      ',
-//    '                         2            ',
-//    '                       1111         00',
-//    '     1111111           1111   11111 00',
-//    '    110111111 1111       0111110000 00',
-//    '    10001111111 01111111  110111111100',
-//    '   11111 11     111111     00     1100',
-//    '  11111111111111100101111111   1111100',
-//    '           111011111100111100111100100',
-//    '        111111111111111111111100111100',
-//],
-//    hideObjectLevel2 =  [
-//    '      ',
-//    '                         2            ',
-//    '         u             1111     wu  00',
-//    '     1111111           1111 w 11111 00',
-//    '    110111w11 1111       0111110u00 00',
-//    '    1u0 1111111001w11111  110111111100',
-//    '   1w111 11 u   111111     000   u1100',
-//    '  111111111111111w01011111110  1111100',
-//    '         u 1w1011u111w0111100111100100',
-//    '        111111111111111111111100111100',
-//],
-//    starsMapLevel2 =  [
-//    '      ',
-//    '                         2            ',
-//    '                       1s11       s 00',
-//    '     1111s11           1111   11111 00',
-//    '    1101s1111 1111    s  0s11110000s00',
-//    '   s100s1s11111 0s11s111  110111111100',
-//    '  s11111 11   s 111s11s  s 00     1100',
-//    '  111111111111111001s1111111   1111100',
-//    '        s  1110111s110011s1001111ss100',
-//    '        111111111111111111111100111100',
-//],
-//    ladderLevel2 = [
-//    '      ',
-//    '                         2            ',
-//    '                       r11r         00',
-//    '     l11111r           111r   l1111 00',
-//    '    l1011111r l11r       01l1r10000 00',
-//    '    r00 11111110011l1111  11011111r100',
-//    '   111l1 lr     l11111     000    1l00',
-//    '  11111111111l11100l0111r1110  l111l00',
-//    '           r1l01r111100l11100l11r00l00',
-//    '        111111111111111111111100111100',
-//],
-//    decorationLevel2 = [
-//    '      ',
-//    '                       v_t            ',
-//    '     mm  _t            |v_1   v_ttm 00',
-//    '     |1_vm|v   _t      111v_tm11111 00',
-//    '    v101|t1v1m1111v   v  0v11||mv_t 00',
-//    '   v1_0011t1111 01|_vt11  11011111|100',
-//    '  tvm_|vmv|vtv_m_11t1_v  v_0   t v|100',
-//    '  111111111_v|11v00v0m1t|v11 t_|m_m100',
-//    '          vm|v_||mv_|00m_tvvvm11|v_100',
-//    '        111111111111111111111100111100',
-//],
-//    enemiesMapLevel2 =  [
-//    '      ',
-//    '                         2            ',
-//    '     |  w  /           |1w/   |w  / 00',
-//    '     |11111/           111| w /111  00',
-//    '    110/ 1w11 /111       0111|10w00/00',
-//    '   |1w0/1111111/  w11/11  110111111100',
-//    '  |1w111 11 w   /1111|  w /00  | w1/00',
-//    '  111111111111/11w01/11|1w/00  1111100',
-//    '        |w 111011w111|w111/00/11|w0/00',
-//    '        111111111111111111111100111100',
-//];  
-////
-//var map = {
-//    width : 100,
-//    height : 100,
-//    image: pjs.tiles.newImage('img/Tiles.png'),
-//    level: null,
-//    tile : {
-//        //Ground objects
-//        '1': point(121, 128),//Graund + wall
-//        '0': point(288, 288),//Graund
-//        '2': point(67, 80),//Level end
-//    }
-//};
-//levelComplitedAnimation = map.image.getAnimation(67, 50, 25, 30, 1);
-////Objects for hide
-//var hideObjs = {
-//    width: 100,
-//    height: 100,
-//    image: pjs.tiles.newImage('img/Tiles.png'),
-//    level: null,
-//    tile : {
-//        'w': point(240, 112),//Hide in shrab
-//        'u': point(100, 80),//Hide in Colums
-//    }
-//}
-//var starsMap = {
-//    width: 10,
-//    height: 10,
-//    level: null,
-//};
-////Ladders
-//var ladder = {
-//    width : 100,
-//    height : 100,
-//    image: pjs.tiles.newImage('img/Tiles.png'),
-//    level: null,
-//    tile : {
-//        //Ladders objects
-//        'r': point(24, 113),//Ladder1 right
-//        'l': point(24, 113),//ladder1 left
-//    }
-//};
-////Decorations
-//var decoration = {
-//    width: 100,
-//    height: 100,
-//    level: null,
-//    tile: {
-//        //Decoration Objects
-//        'd': point(201, 104),//Decoration 1 'Information onject'
-//        'v': point(288, 247),//Decoration 2 'grass'
-//        '_': point(163, 100),//Decoration 3 'colum in ground'
-//        't': point(272, 97),//Decoration 4 'fir-tree'
-//        'm': point(415, 104),//Decoration 5 'boletuses'
-//        '|': point(128, 88),//Decoration 6 'Colum1'
-//    }
-//}
-////Enemies
-//var enemiesMap = {
-//    w: 40,
-//    h: 20,
-//    level: null,
-//}
+    hideObjsCharW = {
+    animation: hideObjs.image.getAnimation(hideObjs.tile['w'].x, hideObjs.tile['w'].y, 16, 15, 1),
+        x : null,
+        y : 60,
+        w : hideObjs.width,
+        h : hideObjs.height, 
+},  hideObjsCharU = {
+    animation: hideObjs.image.getAnimation(hideObjs.tile['u'].x, hideObjs.tile['u'].y, 25, 30, 1),
+        x : null,
+        y : 60,
+        w : hideObjs.width,
+        h : hideObjs.width, 
+},
+//
+    starsCharS = {
+        file: starImage,
+        x : 40,
+        y : 70,
+        w : 20,
+        h : 20, 
+},
+//
+    ladderCharL = {
+    animation: ladder.image.getAnimation(ladder.tile['l'].x, ladder.tile['l'].y, 16, 32, 1),
+        x : null,
+        y : null,
+        w : ladder.width,
+        h : ladder.height, 
+},
+    ladderCharR = {
+    animation: ladder.image.getAnimation(ladder.tile['r'].x, ladder.tile['r'].y, 16, 32, 1),
+        x : 60,
+        y : null,
+        w : ladder.width,
+        h : ladder.height, 
+},
+//
+    decorationCharD = { 
+            animation: map.image.getAnimation(decoration.tile['d'].x, decoration.tile['d'].y, 16, 25, 1),
+            x : null,
+            y : 61,
+            w : decoration.width,
+            h : decoration.height, 
+            userData: {
+                isInformationObject: true,
+                informationNumber: informationValue,
+            }
+},  decorationCharV = { 
+        animation: map.image.getAnimation(decoration.tile['v'].x, decoration.tile['v'].y, 16, 8, 1),
+        x : null,
+        y : 60,
+        w : decoration.width,
+        h : decoration.height, 
+},  decorationChar_ = { 
+        animation: map.image.getAnimation(decoration.tile['_'].x, decoration.tile['_'].y, 25, 13, 1),
+        x : null,
+        y : 65,
+        w : decoration.width + 40,
+        h : decoration.height, 
+},  decorationCharT = { 
+        animation: map.image.getAnimation(decoration.tile['t'].x, decoration.tile['t'].y, 16, 31, 1),
+        x : null,
+        y : -20,
+        w : decoration.width,
+        h : decoration.height + 20, 
+        scale: 2,
+},  decorationCharM = { 
+        animation: map.image.getAnimation(decoration.tile['m'].x, decoration.tile['m'].y, 16, 10, 1),
+        x : null,
+        y : 80,
+        w : 16,
+        h : 10, 
+        scale: 2,
+},  decorationCharI = { 
+        animation: map.image.getAnimation(decoration.tile['|'].x, decoration.tile['|'].y, 10, 15, 1),
+        x : null,
+        y : 95,
+        w : 10,
+        h : 5, 
+        scale: 2,
+},
+//Волк
+    enemyCharW = {
+          animation : enemyWolfTile,
+          x : null,
+          y : 70,
+          w : 70, 
+          h : 30, 
+          delay: 10,
+          userData: {
+              speedX: 0,
+              huntingMode: false,
+              moveR: true,
+              playWolfMoveRight: false,
+              playWolfMoveLeft: false,
+              playCounter: 0,
+              audioMoveRightHide: eWolfMoveRightHide,
+              audioMoveLeftHide: eWolfMoveLeftHide,
+              audioHuntingMode: eWolfHuntingMode,
+              audioMoveLeftBaysick: eWolfMoveLeftBaysick,
+              audioMoveRightBaysick: eWolfMoveRightBaysick,
+              playCounterBaysick: 0,
+              volumeForMoveBaysick: 0,
+              volumeFixerHide: 1,
+          }
+};
 
 
 
+
+
+
+levelComplitedAnimation = map.image.getAnimation(67, 50, 25, 30, 1);
